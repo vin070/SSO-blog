@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSP demo</title>
+
+  <!-- Internal CSS-->
+  <link rel="stylesheet" href="./style.css">
+  <!--External CSS-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"    crossorigin="anonymous">
+  <!-- Self hosted CSS-->
+  <style nonce="CSP-NONCE">
+    body {
+      background-color: #5e6d7a;
+    }
+
+  </style>
+</head>
+
+<body>
+  <h1>CSP demo</h1>
+
+  <!--External script-->
+  <script nonce="CSP-NONCE" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script nonce="CSP-NONCE" src="http://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <!--Inline script-->
+  <script nonce="CSP-NONCE">
+    document.getElementsByTagName('h1')?.innerText = 'I am an inline script';
+  </script>
+
+  <!--Self hosted script-->
+  <script src="./index.js"></script>
+  
+  <div class="specific-directive-container">
+    <p>Loading of image</p>
+     <!--External image-->
+  <img src="https://upload.wikimedia.org/wikipedia/commons/7/73/Flat_tick_icon.svg" alt="tick" width="24" height="24">
+
+  <!--Base 64 encoded image-->
+  <img
+    src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSJyZWQiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDE2IDE2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxwYXRoIGQ9Ik00LjY0NiA0LjY0NmEuNS41IDAgMDEuNzA4IDBMOCA3LjI5M2wyLjY0Ni0yLjY0N2EuNS41IDAgMDEuNzA4LjcwOEw4LjcwNyA4bDIuNjQ3IDIuNjQ2YS41LjUgMCAwMS0uNzA4LjcwOEw4IDguNzA3IDUuMzUzIDExLjM1N2EuNS41IDAgMDEtLjcwOC0uNzA4TDcuMjkzIDggNC42NDYgNS4zNTNhLjUuNSAwIDAxMC0uNzA4eiIvPgo8L3N2Zz4="
+    alt="cross" width="24" height="24">
+  </div>
+ 
+  <div class="specific-directive-container">
+    <p>Loading of iframe</p>
+ <!--External iframe-->
+ <iframe src="https://meet.jit.si/" width="300" height="300"></iframe>
+  </div>
+ 
+
+  <!--External font-->
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap">
+
+  <!--External font-->
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap">
+</body>
+
+</html>

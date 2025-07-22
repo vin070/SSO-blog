@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Complete Guide to Content Security Policy (CSP) - Web Security Blog
+    </title>
+    <link rel="stylesheet" href="style.css" />
+    <meta
+      name="description"
+      content="A comprehensive guide to Content Security Policy (CSP) covering directives, implementation, and best practices for web security."
+    />
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <h1 class="main-title">Content Security Policy (CSP)</h1>
+        <p class="subtitle">A Complete Guide to CSP</p>
+      </div>
+    </header>
+
+    <!-- Table of Contents -->
+    <div class="toc-container">
+      <div class="toc">
+        <h3>Table of Contents</h3>
+        <ul>
+          <li><a href="#intro">What is CSP?</a></li>
+          <li><a href="#directives">Common CSP Directives</a></li>
+          <li><a href="#syntax">CSP Syntax</a></li>
+          <li><a href="#url-specification">Ways to Specify URLs in CSP</a></li>
+          <li><a href="#keywords">Common CSP Keywords</a></li>
+          <li><a href="#validation">How browser validates scripts</a></li>
+          <li><a href="#inline-scripts">Types of Inline Scripts</a></li>
+          <li><a href="#nonce">What is Nonce?</a></li>
+          <li><a href="#encryption">Supported Encryption in Browser</a></li>
+          <li><a href="#violations">How to Report CSP Violations</a></li>
+          <li><a href="#references">References</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <main class="container">
+      <article class="blog-post">
+        <section id="intro" class="intro">
+          <h2>What is Content Security Policy (CSP)?</h2>
+          <p>
+            Content Security Policy (CSP) is a security standard that helps
+            prevent cross-site scripting (XSS) and other code injection attacks.
+            When you load an HTML document from a server, CSP controls which
+            URLs should be allowed from that HTML document and which should be
+            blocked.
+          </p>
+        </section>
+
+        <section id="directives" class="directives">
+          <h2>Most Used CSP Directives</h2>
+
+          <div class="directive-card">
+            <h3>default-src</h3>
+            <p>
+              If any directive ends with the "src" keyword and then that
+              directive is not specified in the CSP policy, then the default-src
+              directive will be used. If you don't know the directive name to
+              put the URL, you can put it in default-src directive.
+            </p>
+          </div>
+
+          <div class="directive-card">
+            <h3>script-src</h3>
+            <p>
+              Controls which external, internal, or inline scripts are allowed
+              from the HTML document.
+            </p>
+          </div>
+
+          <div class="directive-card">
+            <h3>connect-src</h3>
+            <p>
+              Controls which fetch, WebSocket, or EventSource request are
+              allowed.
+            </p>
+          </div>
+
+          <div class="directive-card">
+            <h3>style-src</h3>
+            <p>
+              Controls which inline, internal, or external style URLs are
+              allowed.
+            </p>
+          </div>
+
+          <div class="directive-card">
+            <h3>font-src</h3>
+            <p>
+              Controls which inline, internal, or external fonts can be loaded
+              from the document when included using @font-face CSS rule.
+            </p>
+          </div>
+
+          <div class="directive-card">
+            <h3>img-src</h3>
+            <p>
+              Controls from which domain images are allowed in the document.
+            </p>
+          </div>
+
+          <div class="directive-card">
+            <h3>media-src</h3>
+            <p>Defines allowed audio/video elements in the document.</p>
+          </div>
+
+          <div class="directive-card">
+            <h3>worker-src</h3>
+            <p>
+              Controls which web workers are allowed from the document. If you
+              are importing scripts inside web workers, you cannot use hash or
+              nonce-based authentication on scripts.
+            </p>
+          </div>
+
+          <div class="directive-card">
+            <h3>frame-src</h3>
+            <p>
+              Controls which domains should be allowed in iframe src attributes
+              when embedding iframes in the document.
+            </p>
+          </div>
+
+          <div class="directive-card">
+            <h3>frame-ancestors</h3>
+            <p>
+              If someone is embedding your HTML document in any third-party
+              page, it controls which domain can embed your page.
+            </p>
+          </div>
+
+          <div class="directive-card">
+            <h3>upgrade-insecure-requests</h3>
+            <p>Automatically upgrades HTTP to HTTPS requests.</p>
+          </div>
+        </section>
+
+        <section id="syntax" class="syntax">
+          <h2>CSP Policy Syntax Structure</h2>
+          <img
+            src="./assets/img/CSP syntax.png"
+            alt="CSP Policy Syntax Structure"
+          />
+        </section>
+
+        <section id="url-specification" class="url-specification">
+          <h2>Ways to Specify URLs in CSP</h2>
+
+          <div class="method-card">
+            <h3>1. Domain Only</h3>
+            <code>domain = abc.com</code>
+            <p>
+              Allow requests on abc.com from any protocol, any port, any file is
+              allowed. This is the least safest method.
+            </p>
+          </div>
+
+          <div class="method-card">
+            <h3>2. Protocol + Domain + [Port]</h3>
+            <code>https://abc.com</code>
+            <p>
+              Allow requests on https://abc.com from specified protocol,
+              specified/default port, any resource path. This is better than the
+              first method.
+            </p>
+          </div>
+
+          <div class="method-card">
+            <h3>3. Protocol + Domain + [Port] + File Path</h3>
+            <code>https://abc.com/specific/path</code>
+            <p>
+              Allow request on specific protocol, specific domain, specific port
+              and only specified path is allowed.
+            </p>
+          </div>
+
+          <div class="method-card">
+            <h3>4. Wildcard in Domain</h3>
+            <code>https://*.abc.com</code>
+            <p>
+              Allow all requests using HTTPS protocol on port 443 and only on
+              subdomains of abc.com, not on the domain(<a href="http://abc.com"
+                >http://abc.com</a
+              >) itself.
+            </p>
+          </div>
+
+          <div class="info-box">
+            <h3>Which One is Best?</h3>
+            <p>
+              Except one, all are good - the choice depends on your security
+              requirements. More specific URLs provide better security but
+              require more maintenance.
+            </p>
+          </div>
+        </section>
+
+        <section id="keywords" class="keywords">
+          <h2>CSP Keywords</h2>
+
+          <div class="keywords-grid">
+            <div class="keyword-item">
+              <code>'none'</code>
+              <p>Block all requests for specific directive</p>
+            </div>
+            <div class="keyword-item">
+              <code>'self'</code>
+              <p>
+                Allow all requests from the same domain from which the document
+                is loaded for specific directive
+              </p>
+            </div>
+            <div class="keyword-item">
+              <code>'data:'</code>
+              <p>Allow all base64 encoding</p>
+            </div>
+            <div class="keyword-item">
+              <code>'blob:'</code>
+              <p>Allow all blob URLs</p>
+            </div>
+            <div class="keyword-item">
+              <code>'http:'</code>
+              <p>Allow all HTTP requests</p>
+            </div>
+            <div class="keyword-item">
+              <code>'https:'</code>
+              <p>Allow all HTTPS requests</p>
+            </div>
+            <div class="keyword-item">
+              <code>'ws:'</code>
+              <p>Allow all WebSocket requests</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="validation" class="validation">
+          <h2>How Browser Validates Scripts</h2>
+
+          <div class="flowchart">
+            <h3>
+              How browser validate and allow the js file when script is allowed
+              on hash basis not on URL basis
+            </h3>
+            <img
+              src="assets/img/script hash generation flow.png"
+              alt="How hashes is generated for script files"
+            />
+          </div>
+
+          <div class="flowchart">
+            <h3>
+              How browser validate and allow the js file when script is allowed
+              on URL basis not on hash basis
+            </h3>
+            <img
+              src="assets/img/script validation flow.png"
+              alt="How browser validate and allow the script"
+            />
+          </div>
+
+          <div class="flowchart">
+            <h3>How CSP works for inline script on hash basis</h3>
+            <img
+              src="assets/img/inline script hash generation flow.png"
+              alt="How browser validate and allow the script"
+            />
+          </div>
+        </section>
+
+        <section id="inline-scripts" class="inline-scripts">
+          <h2>Types of Inline Scripts</h2>
+
+          <div class="warning-box">
+            <h3>⚠️ Don't Use Inline Scripts</h3>
+            <p>
+              Inline scripts are a major security risk and should be avoided
+              when possible.
+            </p>
+          </div>
+
+          <div class="examples">
+            <h3>Examples of Inline Scripts:</h3>
+            <ol>
+              <li><code>&lt;script&gt;alert('hi')&lt;/script&gt;</code></li>
+              <li>
+                <code
+                  >&lt;button
+                  onclick="alert('click')"&gt;click&lt;/button&gt;</code
+                >
+              </li>
+              <li>
+                <code
+                  >&lt;a href="javascript:alert('hi')"&gt;click&lt;/a&gt;</code
+                >
+              </li>
+              <li><code>setTimeout("alert()", 1000);</code></li>
+              <li>
+                <code
+                  >element.innerHTML =
+                  "&lt;script&gt;alert(1)&lt;/script&gt;"</code
+                >
+              </li>
+              <li>
+                <code
+                  >document.write("&lt;script&gt;alert(1)&lt;/script&gt;")</code
+                >
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        <section id="nonce" class="nonce">
+          <h2>What is Nonce?</h2>
+
+          <div class="nonce-explanation">
+            <p>
+              <strong>Nonce</strong> is an arbitrary number that can be used
+              once in cryptographic communication. It is often used as a random
+              or psesudo random number issued by authentication protocol to
+              ensure that each communication session is unique and therefore
+              that old communication cannot be used in replay attacks.
+            </p>
+
+            <div class="info-box">
+              <h3>Why Nonce is Better Than Hash</h3>
+              <ul>
+                <li>
+                  Even a slight change in inline script can change hash value
+                  but not nonce value
+                </li>
+                <li>
+                  Every time an external script is updated, hash value will be
+                  changed but not nonce
+                </li>
+                <li>
+                  Nonce will be unique on every request, unlike hash value which
+                  remains constant until the code is updated
+                </li>
+                <li>
+                  Once nonce is configured on server side, you don't have to
+                  configure again
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="implementation">
+            <h3>NGINX Configuration for Nonce</h3>
+            <div class="code-block">
+              <h4>Enable nonce in nginx:</h4>
+              <code>
+                # Install/enable http_sub_module<br />
+                set $cspNonce $request_id; // decalre cspNonce variable and
+                assign value of request_id to it<br />
+                sub_filter_once off; // allow multiple replacements<br />
+                sub_filter_types *; // apply to all content types<br />
+                sub_filter 'CSP-NONCE' $cspNonce; // replace CSP-NONCE with
+                cspNonce value in document<br />
+                add_header Content-Security-Policy "script-src 'self'
+                'nonce-$cspNonce';" // add CSP header with nonce
+              </code>
+            </div>
+
+            <div class="code-block">
+              <h4>Client Side Implementation:</h4>
+              <code>
+                &lt;script nonce="NGINX-CSP-NONCE"&gt;<br />
+                // Your script content here<br />
+                &lt;/script&gt;
+              </code>
+            </div>
+          </div>
+
+          <div class="nonce-behavior">
+            <h3>Nonce Behavior Across Browser Contexts</h3>
+            <ul>
+              <li>Multiple tabs in one window = SAME nonce</li>
+              <li>Multiple tabs in two or more normal windows = SAME nonce</li>
+              <li>
+                Multiple tabs in one or more incognito windows = SAME nonce
+              </li>
+              <li>
+                One tab in normal window and one tab in incognito window =
+                Different nonce
+              </li>
+            </ul>
+          </div>
+          <div class="flowchart">
+            <h3>How SSL handshake happens</h3>
+            <img
+              src="assets/img/ssl handshake flow.png"
+              alt="How browser validate and allow the script"
+            />
+            <p><b>Note:</b> Session key value is used in nonce attribute</p>
+          </div>
+        </section>
+
+        <section id="encryption" class="encryption">
+          <h2>Supported Encryption in Browser</h2>
+          <div class="encryption-list">
+            <ul>
+              <li>SHA-256</li>
+              <li>SHA-384</li>
+              <li>SHA-512</li>
+            </ul>
+          </div>
+          <div class="hash-format">
+            <h3>CSP Hash Format</h3>
+            <p>
+              The format for CSP hash values is:
+              <code>SHA<256/384/512>-&lt;hashvalue&gt;</code>
+            </p>
+          </div>
+        </section>
+
+        <section id="violations" class="violations">
+          <h2>How to Report CSP Violations</h2>
+          <p>
+            I am looking for collabraton with anyone who can provide me a
+            minimal server with domain to test CSP violations because browser
+            doesn't allow logging in localhost environment.
+          </p>
+        </section>
+
+        <section id="references" class="references">
+          <h2>References</h2>
+          <div class="references-list">
+            <ul>
+              <li>
+                <a href="https://content-security-policy.com/" target="_blank"
+                  >CSP blog</a
+                >
+              </li>
+              <li>
+                <a href="https://web.dev/articles/strict-csp" target="_blank"
+                  >CSP blog - Strict CSP</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy-Report-Only"
+                  target="_blank"
+                  >Content-Security-Policy-Report-Only header</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/report-to"
+                  target="_blank"
+                  >Report-To directive</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Reporting-Endpoints"
+                  target="_blank"
+                  >Reporting-Endpoints header</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://developer.chrome.com/blog/reporting-api-migration#csp_reporting_migration"
+                  target="_blank"
+                  >Migrate to Reporting API v1</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://developer.chrome.com/docs/capabilities/web-apis/reporting-api"
+                  target="_blank"
+                  >Monitor your web application with the Reporting API</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.youtube.com/watch?v=j9QmMEWmcfo"
+                  target="_blank"
+                  >How SSL works</a
+                >
+              </li>
+            </ul>
+          </div>
+        </section>
+      </article>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>&copy; 2024 CSP Security Blog. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="index.js"></script>
+  </body>
+</html>
